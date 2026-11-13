@@ -1141,6 +1141,9 @@ header{height:38px;padding:4px 8px}
 .info-zona .iz-dir{background:#B00020;color:#fff;font-weight:900;padding:2px 5px;border-radius:4px;display:inline-block;margin:3px 0}
 #ctx-line .ctxdir{background:#B00020;color:#fff;padding:1px 5px;border-radius:4px;font-weight:900;margin-left:4px}
 .info-zona .iz-pend{background:#9A3E12;color:#fff;font-weight:900;padding:2px 5px;border-radius:4px;display:inline-block;margin:3px 0}
+/* Barra con 4 botones: Calles, Satélite, Cómo llegar, Mi ubicación (13/11) */
+.actions{grid-template-columns:auto auto 1fr auto}
+#btn-llegar{min-height:44px;font-size:12px;font-weight:900}
 </style>
 </head>
 <body>
@@ -1181,6 +1184,7 @@ header{height:38px;padding:4px 8px}
     <button class="btn-lay active" onclick="setLayer('osm',this)">Calles</button>
     <button class="btn-lay" onclick="setLayer('sat',this)">Satélite</button>
     <button class="btn-lay" id="btn-ubicacion" onclick="centrarMiUbicacion()">● Mi ubicación</button>
+    <button class="btn-lay" id="btn-llegar" onclick="comoLlegar()">Cómo llegar</button>
   </div>
 </div>
 
@@ -1201,7 +1205,7 @@ const ZONAS = {"cba|Z01":{"ciudad":"cba","zona":"Z01","terminal":false,"ref":"Pl
 const MANZANAS = {features:[]};
 const BORDES = {features:[]};
 const ARRANQUES = [];
-const VERSION = {"codigo": "fa580cde", "fecha_datos": "12/11/2026 21:57", "fecha_generado": "12/11/2026 22:09", "prueba": false, "n_zonas": 46};
+const VERSION = {"codigo": "2bb0d2f7", "fecha_datos": "12/11/2026 21:57", "fecha_generado": "13/11/2026 18:03", "prueba": false, "n_zonas": 46};
 
 /* Colores fijos. COL_NUM: el número sobre la manzana, más oscuro que el borde. */
 const COL={T:'#C0392B',C:'#2196F3',S:'#D4A017',NE:'#9E9E9E',LINEA:'#4FC3F7',ARRANQUE:'#00C853'};
@@ -1844,6 +1848,14 @@ var ultimaPrecisionGPS = null;
 const COLP = {T:'#C0392B', S:'#D4A017', OTRA:'#8a8f99'};
 const CIUDAD = {cba:'Córdoba', rc:'Río Cuarto'};
 
+/* Botón "Cómo llegar" en la barra (Martín, 13/11): abre Google Maps hacia la parada A
+   de la zona (o SA si se está viendo el suplente). */
+function comoLlegar(){
+  var z = ZONAS[zonaActual]; if(!z) return;
+  var sit = (mostrarSup && z.s) ? z.s : z.t; if(!sit || !sit.paradas || !sit.paradas.length) return;
+  var p = sit.paradas.find(function(x){ return x.letra === 'A'; }) || sit.paradas[0];
+  window.open(llegar(p), '_blank');
+}
 function letraDe(p, sup){ return (sup ? 'S' : '') + p.letra; }
 function nombreParada(z, p, sup){ return z.ciudad === 'rc' ? p.nombre : 'Parada ' + letraDe(p, sup); }
 function llegar(p){ return 'https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lon + '&travelmode=transit'; }
