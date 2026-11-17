@@ -1205,7 +1205,7 @@ const ZONAS = {"cba|Z01":{"ciudad":"cba","zona":"Z01","terminal":false,"ref":"Pl
 const MANZANAS = {features:[]};
 const BORDES = {features:[]};
 const ARRANQUES = [];
-const VERSION = {"codigo": "b1f0b3d3", "fecha_datos": "16/11/2026 12:17", "fecha_generado": "16/11/2026 12:29", "prueba": false, "n_zonas": 46};
+const VERSION = {"codigo": "1e1d04aa", "fecha_datos": "16/11/2026 12:17", "fecha_generado": "17/11/2026 20:24", "prueba": false, "n_zonas": 46};
 
 /* Colores fijos. COL_NUM: el número sobre la manzana, más oscuro que el borde. */
 const COL={T:'#C0392B',C:'#2196F3',S:'#D4A017',NE:'#9E9E9E',LINEA:'#4FC3F7',ARRANQUE:'#00C853'};
@@ -1954,10 +1954,10 @@ function fichaZona(z){
   var h = '<div class="iz-tit">' + esc(CIUDAD[z.ciudad] + ' · ' + tituloZona(z)) + '</div>';
   if(z.dupla) h += '<div class="iz-dir">SE TRABAJA EN DUPLA</div>';
   if(z.terminal){
-    h += '<div>Terminal de Ómnibus: se trabaja por sectores (T2 Norte, plataformas 40–69; T2 Sur, 70–90; T1). El sector de cada turno está en tu hoja.</div>';
+    h += '<div>Terminal de Ómnibus: se trabaja por sectores (T2 Norte, plataformas 40–69; T2 Sur, 70–90; T1). El sector de cada turno está en tu Asignación.</div>';
   } else {
     h += '<div>' + z.zona + ': <b>' + z.t.paradas.length + '</b> ' + (z.t.paradas.length === 1 ? 'parada' : 'paradas')
-       + (z.t.paradas.length > 1 ? ' · tu hoja de turno dice en cuál y en qué horario' : '') + '</div>';
+       + (z.t.paradas.length > 1 ? ' · podés trabajar en cualquiera de estas paradas; en tu Asignación está el horario' : '') + '</div>';
     z.t.paradas.forEach(function(p){
       h += '<div class="iz-row"><span class="blk T">' + p.letra + '</span><span class="iz-cod">' + esc(nombreParada(z, p, false)) + '</span></div>'
          + '<div class="iz-sub">' + esc(p.detalle) + ' · <a href="' + llegar(p) + '" target="_blank" style="color:#8ab4f8">Cómo llegar</a></div>';
@@ -1965,12 +1965,12 @@ function fichaZona(z){
   }
   if(z.s){
     h += '<div class="iz-row" style="margin-top:8px"><span class="blk S">suplente</span><span class="iz-cod">' + esc(z.zona + ' suplente' + (z.s.ref ? ' · ' + z.s.ref : '')) + '</span></div>'
-       + '<div class="iz-sub">Solo si la zona no se puede trabajar y con autorización de la supervisora' + (z.sup_dupla ? '. <b>Siempre en dupla.</b>' : '.') + '</div>';
+       + '<div class="iz-sub">Solo si la zona no se puede trabajar y con autorización de supervisión' + (z.sup_dupla ? '. <b>Siempre en dupla.</b>' : '.') + '</div>';
     z.s.paradas.forEach(function(p){
       h += '<div class="iz-sub">' + letraDe(p, true) + (z.ciudad === 'rc' ? ' · ' + esc(p.nombre) : '') + ' · ' + esc(p.detalle) + ' · <a href="' + llegar(p) + '" target="_blank" style="color:#8ab4f8">Cómo llegar</a></div>';
     });
   } else if(!z.terminal){
-    h += '<div class="iz-sub" style="margin-top:8px">' + z.zona + ' sin suplente: si no se puede trabajar, no te cambies de parada; avisá a la supervisora.</div>';
+    h += '<div class="iz-sub" style="margin-top:8px">' + z.zona + ' sin suplente: si la zona no se puede trabajar, avisá a supervisión.</div>';
   }
   h += '<div class="iz-sub" style="margin-top:6px">' + textoVersion() + '</div>';
   return h;
