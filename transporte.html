@@ -1205,7 +1205,7 @@ const ZONAS = {"cba|Z01":{"ciudad":"cba","zona":"Z01","terminal":false,"ref":"Pl
 const MANZANAS = {features:[]};
 const BORDES = {features:[]};
 const ARRANQUES = [];
-const VERSION = {"codigo": "94958c7a", "fecha_datos": "17/11/2026 23:18", "fecha_generado": "17/11/2026 23:20", "prueba": false, "n_zonas": 46};
+const VERSION = {"codigo": "f9a689ed", "fecha_datos": "17/11/2026 23:20", "fecha_generado": "17/11/2026 23:44", "prueba": false, "n_zonas": 46};
 
 /* Colores fijos. COL_NUM: el número sobre la manzana, más oscuro que el borde. */
 const COL={T:'#C0392B',C:'#2196F3',S:'#D4A017',NE:'#9E9E9E',LINEA:'#4FC3F7',ARRANQUE:'#00C853'};
@@ -1312,11 +1312,15 @@ function initMapa(){
     var d = L.DomUtil.create('div','version-box');
     d.id = 'version-box';
     d.innerHTML = textoVersion();
+    if(!verVisible()) d.style.display = 'none';
     return d;
   };
   ver.addTo(mapa);
 }
 
+/* 17/11 (Martín): la versión NO se muestra a las encuestadoras. Para verla: agregar ?ver=1 al enlace
+   (o mirar const VERSION en el código de la página). */
+function verVisible(){ return /[?&]ver=/.test(location.search); }
 function textoVersion(){
   var v = VERSION || {};
   var p = v.prueba ? '<span class="prueba">PRUEBA · '+v.n_zonas+' zonas · </span>' : '';
@@ -1659,7 +1663,7 @@ function fichaZona(z){
        + '<span class="iz-cod">'+z.zona+' '+nombreRol(r.rol)+'</span></div>'
        + '<div class="iz-sub">'+(r.barrio||'')+'</div>';
   });
-  h += '<div class="iz-sub" style="margin-top:6px">'+textoVersion()+'</div>';
+  if(verVisible()) h += '<div class="iz-sub" style="margin-top:6px">'+textoVersion()+'</div>';
   return h;
 }
 
@@ -1881,7 +1885,7 @@ function initMapa(){
   inf.onAdd = function(){ var d = L.DomUtil.create('div','info-zona'); d.id = 'info-zona'; L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d); return d; };
   inf.addTo(mapa);
   var ver = L.control({position:'bottomleft'});
-  ver.onAdd = function(){ var d = L.DomUtil.create('div','version-box'); d.id = 'version-box'; d.innerHTML = textoVersion(); return d; };
+  ver.onAdd = function(){ var d = L.DomUtil.create('div','version-box'); d.id = 'version-box'; d.innerHTML = textoVersion(); if(!verVisible()) d.style.display = 'none'; return d; };
   ver.addTo(mapa);
 }
 
@@ -1972,7 +1976,7 @@ function fichaZona(z){
   } else if(!z.terminal){
     h += '<div class="iz-sub" style="margin-top:8px">' + z.zona + ' sin suplente: si la zona no se puede trabajar, avisá a supervisión.</div>';
   }
-  h += '<div class="iz-sub" style="margin-top:6px">' + textoVersion() + '</div>';
+  if(verVisible()) h += '<div class="iz-sub" style="margin-top:6px">' + textoVersion() + '</div>';
   return h;
 }
 
@@ -1981,7 +1985,7 @@ function cargarZona(){
   var ctx = document.getElementById('ctx-line'), inf = document.getElementById('info-zona');
   var z = ZONAS[zonaActual];
   if(!z){ if(ctx) ctx.innerHTML = document.getElementById('sel-ciudad').value ? 'Elija una zona' : 'Elija ciudad y zona'; if(inf) inf.innerHTML = ''; document.getElementById('panel-scroll').innerHTML = ''; return; }
-  try { history.replaceState(null, '', '?c=' + z.ciudad + '&z=' + z.zona + (new URLSearchParams(location.search).get('v') ? '&v=' + new URLSearchParams(location.search).get('v') : '')); } catch(e) {}
+  try { history.replaceState(null, '', '?c=' + z.ciudad + '&z=' + z.zona + (new URLSearchParams(location.search).get('v') ? '&v=' + new URLSearchParams(location.search).get('v') : '') + (verVisible() ? '&ver=1' : '')); } catch(e) {}
 
   /* Línea de contexto permanente: el aviso del suplente va PRIMERO (PEC v9 / SRT). */
   if(ctx){
